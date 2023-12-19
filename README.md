@@ -12,7 +12,7 @@ Proyek ini merupakan perancangan aplikasi jual-beli atau e-commerce yang berfoku
 
 
 
-## What to cover
+## Arsitektur aplikasi web
 
 ### Backend Development
 - Creating REST APIs with Flask with Flask-RestX
