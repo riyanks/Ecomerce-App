@@ -75,6 +75,16 @@ class APITestCase(unittest.TestCase):
 
         self.assertEqual(status_code, 404)
 
+
+    def test_get_one_product(self):
+        id = 1
+        response = self.client.get(f"/product/product/{id}")
+
+        status_code = response.status_code
+        # print(status_code)
+
+        self.assertEqual(status_code, 404)
+
     def test_create_recipe(self):
         signup_response = self.client.post(
             "/auth/signup",
@@ -102,7 +112,7 @@ class APITestCase(unittest.TestCase):
         print(create_recipe_response.json)
 
         self.assertEqual(status_code, 201)
-    def test_create_recipe(self):
+    def test_create_product(self):
         signup_response = self.client.post(
             "/auth/signup",
             json={
@@ -119,8 +129,16 @@ class APITestCase(unittest.TestCase):
         access_token = login_response.json["access_token"]
 
         create_recipe_response = self.client.post(
-            "/recipe/recipes",
-            json={"title": "Test Cookie", "description": "Test description"},
+            "/product/products",
+            json={	"labels": "Hot",
+                    "category": "fashion",
+                    "img": "img7",
+                    "hover_img": "img3",
+                    "title": "Tulip Dressna",
+                    "price": 41.0,
+                    "description": "Donec rutrum congue leo eget malesuada. Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque velit nisi, pretium ut lacinia in, elementum id enim.",
+                    "rating_rate": 1.9,
+                    "rating_count": 10},
             headers={"Authorization": f"Bearer {access_token}"},
         )
 
@@ -168,6 +186,59 @@ class APITestCase(unittest.TestCase):
         status_code = update_response.status_code
         self.assertEqual(status_code, 200)
 
+    def test_update_product(self):
+        signup_response = self.client.post(
+            "/auth/signup",
+            json={
+                "username": "testuser",
+                "email": "testuser@test.com",
+                "password": "password",
+            },
+        )
+
+        login_response = self.client.post(
+            "auth/login", json={"username": "testuser", "password": "password"}
+        )
+
+        access_token = login_response.json["access_token"]
+
+        create_recipe_response = self.client.post(
+            "/product/products",
+            json={	"labels": "Hot",
+                    "category": "fashion",
+                    "img": "img7",
+                    "hover_img": "img3",
+                    "title": "Tulip Dressna",
+                    "price": 41.0,
+                    "description": "Donec rutrum congue leo eget malesuada. Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque velit nisi, pretium ut lacinia in, elementum id enim.",
+                    "rating_rate": 1.9,
+                    "rating_count": 10},
+            headers={"Authorization": f"Bearer {access_token}"},
+        )
+
+        status_code = create_recipe_response.status_code
+
+        id = 1
+
+        update_response = self.client.put(
+            f"product/product/{id}",
+            json={
+                "labels": "Hot",
+                "category": "Branded",
+                "img": "img9",
+                "hover_img": "img3",
+                "title": "Tulip Dressna",
+                "price": 41.0,
+                "description": "Donec rutrum congue leo eget malesuada. Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque velit nisi, pretium ut lacinia in, elementum id enim.",
+                "rating_rate": 1.9,
+                "rating_count": 10
+            },
+            headers={"Authorization": f"Bearer {access_token}"},
+        )
+
+        status_code = update_response.status_code
+        self.assertEqual(status_code, 200)
+
     def test_delete_recipe(self):
         signup_response = self.client.post(
             "/auth/signup",
@@ -201,10 +272,55 @@ class APITestCase(unittest.TestCase):
 
         self.assertEqual(status_code, 200)
         
+  
+
+    def test_delete_product(self):
+        signup_response = self.client.post(
+            "/auth/signup",
+            json={
+                "username": "testuser",
+                "email": "testuser@test.com",
+                "password": "password",
+            },
+        )
+
+        login_response = self.client.post(
+            "auth/login", json={"username": "testuser", "password": "password"}
+        )
+
+        access_token = login_response.json["access_token"]
+
+        create_recipe_response = self.client.post(
+            "/product/product",
+            json={	"labels": "Hot",
+                    "category": "fashion",
+                    "img": "img7",
+                    "hover_img": "img3",
+                    "title": "Tulip Dressna",
+                    "price": 41.0,
+                    "description": "Donec rutrum congue leo eget malesuada. Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque velit nisi, pretium ut lacinia in, elementum id enim.",
+                    "rating_rate": 1.9,
+                    "rating_count": 10},
+            headers={"Authorization": f"Bearer {access_token}"},
+        )
+
+        id = 1
+        delete_response = self.client.delete(
+            f"/product/product/{id}", headers={"Authorization": f"Bearer {access_token}"}
+        )
+
+        status_code = delete_response.status_code
+
+        print(delete_response.json)
+
+        self.assertEqual(status_code, 200)
+        
     def tearDown(self):
         with self.app.app_context():
             db.session.remove()
             db.drop_all()
+
+
 
 
 
